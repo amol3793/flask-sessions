@@ -4,13 +4,19 @@ import os
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
+# Single shared password for this demo — there's no real user store.
+DEMO_PASSWORD = 'password'
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         session.pop('user', None)
 
-        if request.form['password'] == 'password':
-            session['user'] = request.form['username']
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        if username and password == DEMO_PASSWORD:
+            session['user'] = username
             return redirect(url_for('protected'))
 
     return render_template('index.html')
